@@ -1,6 +1,5 @@
 package config
 
-import "github.com/spf13/viper"
 
 import "os"
 import "flag"
@@ -16,7 +15,7 @@ type Config struct {
 }
 
 type HTTPServer struct {
-		Address string 
+		Address string `yaml:"address" env-required:"true"`
 } 
 
 
@@ -42,16 +41,11 @@ func MustLoad() *Config {
 
 	var cfg Config
 
-	if err := cleanenv.ReadConfig(configPath, &cfg); err != nil {
-		log.Fatalf("failed to read config: %s", err.Error())
+	err := cleanenv.ReadConfig(configPath, &cfg)
+	if err != nil {
+		log.Fatalf("can not read config files:: %s", err.Error())
 	}
 
-	return &cfg
-	
-	cleanenv.ReadConfig(configPath, &cfg)
-	if err != nil {
-		log.Fatalf("can not read config files: %s", err.Error())
-	}
 
 	return &cfg
 }
