@@ -27,6 +27,10 @@ go.work.sum
 # env file
 .env
 
+storage
+
+REST-API-Learning-Plan
+
 # Editor/IDE
 # .idea/
 # .vscode/
