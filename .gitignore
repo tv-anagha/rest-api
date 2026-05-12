@@ -28,8 +28,9 @@ go.work.sum
 .env
 
 storage
+/config
 
-REST-API-Learning-Plan
+REST-API-Learning-Plan.md
 
 # Editor/IDE
 # .idea/
