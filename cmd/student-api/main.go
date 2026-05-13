@@ -10,8 +10,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/anaghabodhe/Rest-api/internal/config"
-	"github.com/anaghabodhe/Rest-api/internal/http/handler/student"
+	"github.com/tv-anagha/rest-api/internal/config"
+	"github.com/tv-anagha/rest-api/internal/http/handler/student"
 )
 
 func main() {
