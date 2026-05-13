@@ -8,9 +8,10 @@ import "errors"
 import "io"
 import "github.com/tv-anagha/rest-api/internal/utils/response"
 import "github.com/go-playground/validator/v10"
+import "github.com/tv-anagha/rest-api/internal/storage"
 
 
-func New() http.HandlerFunc {
+func New(storage storage.Storage) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 
@@ -40,7 +41,15 @@ func New() http.HandlerFunc {
 			return	
 		}
 
-		response.WriteJSON(w, http.StatusCreated, map[string]string{"success": "ok"})
+		lastId, err := storage.CreateStudent(student.Name, student.Email, student.Age)
+		if err != nil {
+			response.WriteJSON(w, http.StatusInternalServerError, response.GenerateError(err))
+			return
+		}
+
+		slog.Info("student created successfully", slog.Int("userId", lastId), slog.String("name", student.Name), slog.String("email", student.Email), slog.Int("age", student.Age))
+
+		response.WriteJSON(w, http.StatusCreated, map[string]int{"id": lastId})
 
 	}
 }
