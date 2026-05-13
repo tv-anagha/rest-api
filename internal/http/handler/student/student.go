@@ -9,7 +9,7 @@ import "io"
 import "github.com/tv-anagha/rest-api/internal/utils/response"
 import "github.com/go-playground/validator/v10"
 import "github.com/tv-anagha/rest-api/internal/storage"
-
+import "strconv"
 
 func New(storage storage.Storage) http.HandlerFunc {
 
@@ -51,5 +51,29 @@ func New(storage storage.Storage) http.HandlerFunc {
 
 		response.WriteJSON(w, http.StatusCreated, map[string]int{"id": lastId})
 
+	}
+}
+
+
+func GetById(storage storage.Storage) http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		idStr := r.PathValue("id")
+		slog.Info("getting a student by id", slog.String("id", idStr))
+
+		studentId, err := strconv.Atoi(idStr)
+		if err != nil {
+			response.WriteJSON(w, http.StatusBadRequest, response.GenerateError(err))
+			return
+		}
+
+		student, err := storage.GetStudentById(studentId)
+
+		if err != nil {
+			response.WriteJSON(w, http.StatusInternalServerError, response.GenerateError(err))
+			return
+		}
+		response.WriteJSON(w, http.StatusOK, student)
 	}
 }

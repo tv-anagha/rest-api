@@ -3,6 +3,8 @@ package sqlite
 import "database/sql"
 import "github.com/tv-anagha/rest-api/internal/config"
 import _"github.com/mattn/go-sqlite3"
+import "github.com/tv-anagha/rest-api/internal/types"
+import "fmt"
 
 type Sqlite struct {
 	Db *sql.DB
@@ -49,10 +51,31 @@ func (s *Sqlite) CreateStudent(name string, email string, age int) (int, error) 
 	} 
 
 	lastId, err := result.LastInsertId()
+
 	if err != nil {
 		return 0, err
 	}
 
 	return int(lastId), nil
+}
 
+func (s *Sqlite) GetStudentById(id int) (types.Student, error) {
+stmt, err := s.Db.Prepare(`SELECT * FROM students WHERE id = ? LIMIT 1`)
+if err != nil {
+	return types.Student{}, err
+}
+
+defer stmt.Close()
+
+var student types.Student
+
+err = stmt.QueryRow(id).Scan(&student.ID, &student.Name, &student.Email, &student.Age)
+if err != nil {
+	if err == sql.ErrNoRows {
+		return types.Student{}, fmt.Errorf("no student found with id: %s", fmt.Sprint(id))
+	}
+	return types.Student{}, fmt.Errorf("query error: %w", err)
+}
+
+return student, nil
 }
