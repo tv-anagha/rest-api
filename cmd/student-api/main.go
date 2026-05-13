@@ -11,16 +11,18 @@ import (
 	"time"
 
 	"github.com/anaghabodhe/Rest-api/internal/config"
+	"github.com/anaghabodhe/Rest-api/internal/http/handler/student"
 )
 
 func main() {
+	//load config
 	cfg := config.MustLoad()
 
+	//setup routes
 	router := http.NewServeMux()
-	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello, World welcome to student-api!"))
-	})
+	router.HandleFunc("POST /api/students", student.New())
 
+	//setup server
 	server := http.Server{
 		Addr:    cfg.Address,
 		Handler: router,

@@ -1,0 +1,3 @@
+package response
+
+func Write

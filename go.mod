@@ -1,4 +1,4 @@
-module github.com/anaghabodhe/Rest-api
+module github.com/tv-anagha/rest-api
 
 go 1.25.0
 
