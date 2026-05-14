@@ -9,6 +9,5 @@ type Storage interface {
 	GetStudentById(id int) (types.Student, error)
 	GetStudents() ([]types.Student, error)
 	UpdateStudent(id int, name string, email string, age int) (int, error)
-	// updateStudent(id int, name string, email string, age int) error
-	// deleteStudent(id int) error
+	DeleteStudentById(id int) (int, error)
 }
