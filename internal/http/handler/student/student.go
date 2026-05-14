@@ -92,3 +92,45 @@ func GetList(storage storage.Storage) http.HandlerFunc {
 	
 	}
 }
+
+func UpdateStudent(storage storage.Storage) http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		slog.Info("updating a student by Id")
+
+		idStr := r.PathValue("id")
+		slog.Info("updating a student by id", slog.String("id", idStr))
+
+		studentId, err := strconv.Atoi(idStr)
+		if err != nil {
+			response.WriteJSON(w, http.StatusBadRequest, response.GenerateError(err))
+			return
+		}
+
+		var student types.Student
+
+		err = json.NewDecoder(r.Body).Decode(&student)
+		if errors.Is(err, io.EOF) {
+			response.WriteJSON(w, http.StatusBadRequest, response.GenerateError(err))
+			return
+		}
+
+		if err != nil {
+			response.WriteJSON(w, http.StatusBadRequest, response.GenerateError(err))
+			return
+		}
+
+		if err := validator.New().Struct(student); err != nil {
+			validationErrors := err.(validator.ValidationErrors)
+			response.WriteJSON(w, http.StatusBadRequest, response.ValidateError(validationErrors))
+			return
+		}
+
+		affectedRows, err := storage.UpdateStudent(studentId, student.Name, student.Email, student.Age)
+		if err != nil {
+			response.WriteJSON(w, http.StatusInternalServerError, response.GenerateError(err))
+			return
+		}
+		response.WriteJSON(w, http.StatusOK, map[string]int{"affectedRows": affectedRows})
+	}
+}
